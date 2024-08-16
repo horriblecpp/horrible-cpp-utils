@@ -16,8 +16,48 @@ template<typename T> constexpr char const* print_expr_category<T&&> {"xvalue"};
 #define SHOW(expr) std::cout << #expr ": " << print_expr_category<decltype((expr)) << std::endl
 
 
+// pre C++20 operator templates for equality
+template<typename T>
+bool operator==(T const& lhs, T const& rhs) {
+  // lhs == rhs if lhs is less than or equal to rhs, and rhs is less than or equal to rhs:
+  return lhs <= rhs && lhs >= lhs;
+}
+
+template<typename T>
+bool operator!=(T const& lhs, T const& rhs) {
+  return !(lhs == rhs);
+}
 
 
+// CRTP for Types to automatically implement . operators in terms of .=
+template<typename T>
+class ArithmeticBase {
+public:
+  [[nodiscard]] friend T operator+(T const& lhs, T const& rhs) noexcept {
+    T tmp{lhs};
+    return tmp += rhs;
+  }
+  
+  [[nodiscard]] friend T operator-(T const& lhs, T const& rhs) noexcept {
+    T tmp{lhs};
+    return tmp -= rhs;
+  }
+
+  [[nodiscard]] friend T operator*(T const& lhs, T const& rhs) noexcept {
+    T tmp{lhs};
+    return tmp *= rhs;
+  }
+
+  [[nodiscard]] friend T operator/(T const& lhs, T const& rhs) noexcept {
+    T tmp{lhs};
+    return tmp /= rhs;
+  }
+
+  [[nodiscard]] friend T operator%(T const& lhs, T const& rhs) noexcept {
+    T tmp{lhs};
+    return tmp %= rhs;
+  }
+};
 
 template<typename T>
 class IsCallableT {
