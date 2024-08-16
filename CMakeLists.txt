@@ -9,3 +9,21 @@ project(HorribleUtils
 
 set(CMAKE_MODULE_PATH "${HorribleUtils_SOURCE_DIR}/cmake")
 
+
+
+
+
+
+
+
+
+
+
+option(CREATE_TESTS "Tests on by default" ON)
+
+if (CREATE_TESTS)
+  enable_testing()
+  include(GoogleTest)
+  add_subdirectory(tests)
+endif()
+
